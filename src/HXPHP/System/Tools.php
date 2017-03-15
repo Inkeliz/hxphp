@@ -66,6 +66,31 @@ class Tools
         ];
         return str_replace(' ', '', ucwords(str_replace($find, $replace, $input)));
     }
+    
+    /**
+     * Cria uma string pseudo-aleatoria criptogramente segura, protegida contra timing-attack
+     * @param  int $length  Número de caracteres (sempre par)
+     * @return string       String com caracteres aleatorios
+     */
+    public static function randomString(int $length = 64) : string {
+
+        $length = ceil($length / 2);
+        $randomResult = '';
+
+        for ($i = 0; $i < $length; ++$i) {
+            $randomBytes = unpack('C', random_bytes(1))[1];
+            $c = $randomBytes & 0xf;
+            $b = $randomBytes >> 4;
+            $randomResult .= pack(
+                'CC',
+                (87 + $b + ((($b - 10) >> 8) & ~38)),
+                (87 + $c + ((($c - 10) >> 8) & ~38))
+            );
+        }
+
+        echo $randomResult;
+
+    }
 
     public static function filteredFileName(string $input): string
     {
